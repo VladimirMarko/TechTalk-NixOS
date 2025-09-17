@@ -193,7 +193,7 @@ ls /nix/var/nix/profiles/per-user/root/channels/nixos-wsl
 
 #### Solution: Nix flakes
 
-All inputs are explicit.
+All inputs are explicit in `flake.nix`.
 
 `flake.lock` nails the exact versions of inputs down.
 
