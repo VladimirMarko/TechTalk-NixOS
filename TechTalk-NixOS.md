@@ -90,7 +90,7 @@ cat /etc/nixos/configuration.nix
 
 ```ps
 cd \\wsl$\TestNixOSDistro\home\nixos\
-# https://github.com/VladimirMarko/NixOS-WSL-1-config
+# https://github.com/VladimirMarko/NixOS-WSL-1-config (private repo)
 git clone git@github.com:VladimirMarko/NixOS-WSL-1-config.git
 cd NixOS-WSL-1-config
 ```
@@ -125,6 +125,7 @@ https://www.youtube.com/watch?v=UgrwoAGSPOQ
 Language reference:
 https://nix.dev/manual/nix/2.28/language/index.html
 
+Let's try out the language:
 ```bash
 nix repl
 ```
@@ -163,91 +164,46 @@ x: x + 1
 :q
 ```
 
+```bash
+cat /etc/nixos/configuration.nix`
+```
 
+```nix
+<nixos-wsl> # impurity
+```
 
-cd ~/Downloads
-wsl --install --from-file nixos.wsl --name TestNixOSDistro
-# wsl -d TestNixOSDistro
-
-cat /etc/nixos/configuration.nix
-
-# nixos-rebuild switch
-# nixos-rebuild switch --flake path/to/flake/directory#hostname
-
+What does that reference?
+```bash
+nix repl
+```
+```nix
 <nixos-wsl>
+:q
+```
+```bash
+# ls <nixos-wsl>
+# cat <nixos-wsl>/flake.nix
+```
+
+Evaluation via:
+```bash
 echo $NIX_PATH
-nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=/etc/nixos/configuration.nix:/nix/var/nix/profiles/per-user/root/channels
+# nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=/etc/nixos/configuration.nix:/nix/var/nix/profiles/per-user/root/channels
 ls /nix/var/nix/profiles/per-user/root/channels
 ls /nix/var/nix/profiles/per-user/root/channels/nixos-wsl
+```
+
+Solution: Nix flakes  
 
 
+## Appendix
 
-\\wsl.localhost\TestNixOSDistro\home\nixos\
+Further reading watching: https://www.youtube.com/@vimjoyer
 
-
-
-https://www.youtube.com/watch?v=2eNJy9DSGNw&t=11s
-
-
-1
------------
-What is "Nix"
-=============
-
-Is:
-- Nix package manager
-
-- Nix language
-
-- NixOS
-
-Is not:
-- "Unix-like" (e.g., Unix, Linux, macOS)
-  - but: runs here
-
-- "Nichts"
-  - but: some stupid names (e.g., "nil" - A Nix language server)
-
-
-2
-------------
-Nix, the package manager - why not just APT?
-=================
-
-Nix the package manager
-
-
-
-
-
-2 Notes
-----------
-Advanced Package Tool (APT) - Debian
-
-
--------------
-Nix, the language - why not just JSON?
-==================
-3
-
-
-JS ecosystem - NPM - `package.json`
-
-
-
-
-
-
-
-
-
-
-Further reading / watching:
-- https://www.youtube.com/@vimjoyer
-
-
-
-
+NixOS options:
 https://search.nixos.org/options
+
+Home Manager options:
 https://home-manager-options.extranix.com/
 
+(Home Manager is for managing per-user dotfiles (i.e., `.*`).)
