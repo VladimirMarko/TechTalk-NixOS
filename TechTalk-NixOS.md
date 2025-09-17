@@ -35,13 +35,6 @@ Why?
 Video: NixOS Explained - Vimjoyer:
 https://www.youtube.com/embed/9OMDnZWXjn4?end=229
 
-
-
-(
-Video: NixOS Configuration - Vimjoyer:
-https://www.youtube.com/watch?v=2eNJy9DSGNw
-)
-
 ## Demo - NixOS @ WSL
 
 Get NixOS for WSL:
@@ -53,20 +46,22 @@ Documentations: https://nix-community.github.io/NixOS-WSL/
 https://github.com/nix-community/NixOS-WSL/releases/download/2505.7.0/nixos.wsl
 )
 
-### Install
+### Installation
 ```ps
 wsl -l
 
-cd ~/Downloads`
+cd ~/Downloads
 
 wsl --install --from-file nixos.wsl --name TestNixOSDistro
 # `--name TestNixOSDistro`, as I already have a NixOS WSL disro
-# wsl -d TestNixOSDistro # The new disro opens automatically after installation.
+# wsl -d TestNixOSDistro # This is unnecessary, as a shell for the new distro starts automatically after installation.
 ```
+
+### Try it out
 
 A test:
 ```bash
-cowsay "Moo!"
+cowsay "Moo!" # fails
 nix-shell -p cowsay
 cowsay "Moo!"
 ```
@@ -75,42 +70,41 @@ What's going on?
 ```bash
 which cowsay
 exit
-which cowsay
-# <oldCowsayPath> "Moo!"
+which cowsay # fails
+# <oldCowsayPath> "Moo!" # works
 ```
+
+### NixOS Configuration
+
+Video: NixOS Configuration - Vimjoyer:
+https://www.youtube.com/watch?v=2eNJy9DSGNw
 
 NixOS says:
 > Please run `sudo nix-channel --update` and `sudo nixos-rebuild switch` now, to ensure you're running the latest NixOS and NixOS-WSL versions.
 
-Let's look at the NixOS configuration:
+Instead, let's look at the NixOS configuration:
 ```bash
 ls /etc/nixos
 cat /etc/nixos/configuration.nix
 ```
 
+#### Rebuild
+
+Clone my custom private NixOS configuration into WSL distro from Windows: 
 ```ps
 cd \\wsl$\TestNixOSDistro\home\nixos\
-# https://github.com/VladimirMarko/NixOS-WSL-1-config (private repo)
+# https://github.com/VladimirMarko/NixOS-WSL-1-config (my private repo)
 git clone git@github.com:VladimirMarko/NixOS-WSL-1-config.git
-cd NixOS-WSL-1-config
 ```
 
 ```bash
 cd ~/NixOS-WSL-1-config
-ls
-git status # fails
-nix-shell -p git
-git status
 
-# Fix line endings
-rm -rf *
-git revert .
-git status
-
+# If we don't want to be bothered by the OS rebuild process, we can use the following:
 # Just build the new OS version (populates the cache)
-# nixos-rebuild dry-activate --flake .
+# sudo nixos-rebuild dry-activate --flake .
 
-# Build and switch to the new OS version
+# Build and then immediately switch to the new OS version
 sudo nixos-rebuild switch --flake .
 ```
 
@@ -164,12 +158,15 @@ x: x + 1
 :q
 ```
 
+### Impurity without Nix flakes
+
 ```bash
 cat /etc/nixos/configuration.nix`
 ```
 
+We see the line:
 ```nix
-<nixos-wsl> # impurity
+<nixos-wsl>
 ```
 
 What does that reference?
@@ -184,6 +181,7 @@ nix repl
 # ls <nixos-wsl>
 # cat <nixos-wsl>/flake.nix
 ```
+This is some nix code not managed in `/etc/nixos/`! We can't put that into a Git repo!
 
 Evaluation via:
 ```bash
@@ -193,8 +191,11 @@ ls /nix/var/nix/profiles/per-user/root/channels
 ls /nix/var/nix/profiles/per-user/root/channels/nixos-wsl
 ```
 
-Solution: Nix flakes  
+#### Solution: Nix flakes
 
+All inputs are explicit.
+
+`flake.lock` nails the exact versions of inputs down.
 
 ## Appendix
 
